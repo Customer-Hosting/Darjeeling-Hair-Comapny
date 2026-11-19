@@ -26,7 +26,7 @@ export function Footer({ s }: { s: SiteSettings }) {
         <div className="grid gap-12 sm:grid-cols-2 lg:grid-cols-[1.3fr_1fr_1.2fr_1.2fr]">
           <div>
             <Link href="/" aria-label="Darjeeling Hair Company — home" className="inline-block">
-              <LogoBadge className="w-24 !bg-black/40" />
+              <LogoBadge className="w-28 !bg-black/40" />
             </Link>
             <p className="mt-5 max-w-xs text-sm leading-relaxed">
               A premium unisex salon in Darjeeling, led by a Toni&amp;Guy-trained stylist with 17 years in the glamour industry.

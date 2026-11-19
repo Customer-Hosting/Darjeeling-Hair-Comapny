@@ -24,12 +24,25 @@ export const SERVICE_IMAGES: Record<string, string> = {
   straightening: "/images/services/hair-straightening.webp",
   perming: "/images/services/perming.webp",
   perm: "/images/services/perming.webp",
+  // featured haircut styles (salon photos)
+  "butterfly-haircut": "/images/gallery/style-butterfly-haircut.webp",
+  "layered-bob": "/images/gallery/style-layer-bob.webp",
+  "long-layers": "/images/gallery/style-long-layers.webp",
+  "wolf-cut": "/images/gallery/style-wolf-cut.webp",
+  "low-fade": "/images/gallery/style-low-fade.webp",
+  "taper-fade": "/images/gallery/style-taper-fade.webp",
 };
 
 /** Best-effort match: exact slug first, then a keyword contained in the slug. */
 export function defaultServiceImage(slug: string): string | null {
   if (SERVICE_IMAGES[slug]) return SERVICE_IMAGES[slug];
   const rules: [RegExp, string][] = [
+    [/butterfly/, "butterfly-haircut"],
+    [/bob/, "layered-bob"],
+    [/long-layer/, "long-layers"],
+    [/wolf/, "wolf-cut"],
+    [/low-fade/, "low-fade"],
+    [/taper/, "taper-fade"],
     [/balayage/, "balayage"],
     [/ombre/, "ombre"],
     [/highlight/, "highlights"],
@@ -47,6 +60,12 @@ export function defaultServiceImage(slug: string): string | null {
 }
 
 const G: [string, GalleryItem["category"], string][] = [
+  ["style-butterfly-haircut", "Haircuts", "Butterfly Haircut"],
+  ["style-layer-bob", "Haircuts", "Layered Bob"],
+  ["style-long-layers", "Haircuts", "Long Layers"],
+  ["style-wolf-cut", "Haircuts", "Wolf Cut"],
+  ["style-low-fade", "Haircuts", "Low Fade"],
+  ["style-taper-fade", "Haircuts", "Taper Fade"],
   ["look-01", "Haircuts", "Precision scissor work"],
   ["look-02", "Haircuts", "Detail texturising"],
   ["look-03", "Haircuts", "Classic men's cut"],
@@ -66,6 +85,19 @@ const G: [string, GalleryItem["category"], string][] = [
   ["look-17", "Salon", "Bright & welcoming"],
   ["look-18", "Salon", "Retail corner"],
 ];
+
+/** The salon's featured haircut styles (shown first in the gallery's Haircuts). */
+export const HAIRCUT_STYLES = G_STYLES();
+function G_STYLES() {
+  return [
+    ["style-butterfly-haircut", "Butterfly Haircut"],
+    ["style-layer-bob", "Layered Bob"],
+    ["style-long-layers", "Long Layers"],
+    ["style-wolf-cut", "Wolf Cut"],
+    ["style-low-fade", "Low Fade"],
+    ["style-taper-fade", "Taper Fade"],
+  ] as const;
+}
 
 /** Product photos for the gallery's "Products" category. */
 const G_PRODUCTS: [string, string][] = [
@@ -283,6 +315,54 @@ export const STARTER_SERVICES: StarterService[] = [
     title: "Perming",
     category: "Texture",
     description: "Soft waves to defined curls — modern perms designed to look natural and last.",
+    price: "On consultation",
+    duration: "",
+    featured: false,
+  },
+  {
+    title: "Butterfly Haircut",
+    category: "Cut & Style",
+    description: "Face-framing layers that flutter around the face for volume and movement — long hair with the bounce of a shorter cut.",
+    price: "On consultation",
+    duration: "",
+    featured: true,
+  },
+  {
+    title: "Layered Bob",
+    category: "Cut & Style",
+    description: "A chic bob with soft internal layers for bounce, movement and easy everyday styling.",
+    price: "On consultation",
+    duration: "",
+    featured: false,
+  },
+  {
+    title: "Long Layers",
+    category: "Cut & Style",
+    description: "Seamless long layers that remove bulk and add flow while keeping your length.",
+    price: "On consultation",
+    duration: "",
+    featured: false,
+  },
+  {
+    title: "Wolf Cut",
+    category: "Cut & Style",
+    description: "A textured, shaggy cut with choppy layers on top and lighter lengths — bold and low-maintenance.",
+    price: "On consultation",
+    duration: "",
+    featured: false,
+  },
+  {
+    title: "Low Fade",
+    category: "Cut & Style",
+    description: "A clean men's fade that starts low around the ears and neckline for a sharp yet subtle finish.",
+    price: "On consultation",
+    duration: "",
+    featured: false,
+  },
+  {
+    title: "Taper Fade",
+    category: "Cut & Style",
+    description: "A gradual taper at the sides and neckline that keeps the look neat, modern and versatile.",
     price: "On consultation",
     duration: "",
     featured: false,

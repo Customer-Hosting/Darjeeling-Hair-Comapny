@@ -6,7 +6,7 @@ import { cn } from "@/lib/cn";
 export function LogoBadge({ className, priority }: { className?: string; priority?: boolean }) {
   return (
     <span className={cn("inline-grid aspect-square place-items-center rounded-full bg-espresso p-[7%] shadow-[0_6px_18px_-8px_rgba(42,29,23,.6)]", className)}>
-      <Image src={logo} alt="The Darjeeling Hair Company — Unisex Salon" preload={priority} sizes="(min-width:768px) 96px, 80px" className="h-auto w-full" />
+      <Image src={logo} alt="The Darjeeling Hair Company — Unisex Salon" preload={priority} sizes="(min-width:768px) 112px, 96px" className="h-auto w-full" />
     </span>
   );
 }

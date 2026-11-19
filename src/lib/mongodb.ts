@@ -18,17 +18,29 @@ function getClientPromise(): Promise<MongoClient> {
     );
   }
   if (!globalForMongo._mongoClientPromise) {
-    const client = new MongoClient(uri, {
-      serverSelectionTimeoutMS: 8000,
-      maxPoolSize: 10,
-    });
-    globalForMongo._mongoClientPromise = client.connect().catch((err) => {
-      // allow a retry on the next call instead of caching the failure forever
-      globalForMongo._mongoClientPromise = undefined;
-      throw err;
-    });
+    const connect = () => new MongoClient(uri, { serverSelectionTimeoutMS: 8000, maxPoolSize: 10 }).connect();
+    globalForMongo._mongoClientPromise = connect()
+      .catch(async (err) => {
+        // Some Windows / ISP DNS servers refuse the SRV lookup used by "mongodb+srv://"
+        // (querySrv ECONNREFUSED). Retry once using public DNS resolvers.
+        if (!isSrvDnsError(err)) throw err;
+        const dns = await import("node:dns");
+        dns.setServers(["1.1.1.1", "8.8.8.8", ...dns.getServers()]);
+        console.warn("[mongodb] SRV DNS lookup failed — retrying with public DNS resolvers");
+        return connect();
+      })
+      .catch((err) => {
+        // allow a retry on the next call instead of caching the failure forever
+        globalForMongo._mongoClientPromise = undefined;
+        throw err;
+      });
   }
   return globalForMongo._mongoClientPromise;
+}
+
+function isSrvDnsError(err: unknown): boolean {
+  const e = err as { syscall?: string; code?: string; message?: string };
+  return e?.syscall === "querySrv" || /querySrv|ENOTFOUND _mongodb/.test(String(e?.message ?? ""));
 }
 
 export async function getDb(): Promise<Db> {
@@ -45,4 +57,5 @@ export const COLLECTIONS = {
   products: "products",
   productCategories: "product_categories",
   serviceCategories: "service_categories",
+  pages: "pages",
 } as const;

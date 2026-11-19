@@ -9,6 +9,7 @@ import {
   DEFAULT_GALLERY,
   DEFAULT_HERO,
   DEFAULT_PRODUCT_GALLERY,
+  HAIRCUT_STYLES,
   DEFAULT_SETTINGS,
   STARTER_PRODUCT_CATEGORIES,
   STARTER_PRODUCTS,
@@ -106,7 +107,22 @@ export async function seedSampleContent(db: Db, origin: string): Promise<SeedRep
       }
       await svcCol.insertMany(docs);
       report.services = docs.length;
-    } else report.skipped.push("services");
+    } else {
+      // add newly introduced starter services (e.g. haircut styles) that don't exist yet
+      const titles = new Set((await svcCol.find().project({ title: 1 }).toArray()).map((x) => String(x.title).toLowerCase()));
+      const missing = STARTER_SERVICES.filter((s) => !titles.has(s.title.toLowerCase()));
+      if (missing.length) {
+        const base = await svcCol.countDocuments();
+        const docs = [];
+        for (const [i, s] of missing.entries()) {
+          const slug = slugify(s.title);
+          const img = defaultServiceImage(slug);
+          docs.push({ ...s, slug, imageId: img ? await store(img) : null, active: true, order: base + i, createdAt: new Date(now), updatedAt: new Date(now) });
+        }
+        await svcCol.insertMany(docs);
+        report.services += docs.length;
+      }
+    }
     // create managed service categories (if none) and link every service to one
     const mig = await migrateServiceCategories(db);
     report.serviceCategories = mig.created;
@@ -135,6 +151,22 @@ export async function seedSampleContent(db: Db, origin: string): Promise<SeedRep
       await galCol.insertMany(docs);
       report.gallery = docs.length;
     } else report.skipped.push("gallery");
+
+    // ── Featured haircut styles: added to an existing gallery once, placed first ──
+    {
+      const existing = new Set((await galCol.find({ category: "Haircuts" }).project({ caption: 1 }).toArray()).map((x) => String(x.caption)));
+      const missing = HAIRCUT_STYLES.filter(([, caption]) => !existing.has(caption));
+      if (missing.length) {
+        const docs = [];
+        for (const [i, [file, caption]] of missing.entries()) {
+          docs.push({ caption, category: "Haircuts", order: i, imageId: await store(`/images/gallery/${file}.webp`), createdAt: new Date(now) });
+        }
+        // push the older items back so the new styles come first
+        await galCol.updateMany({ order: { $lt: 1000 } }, { $inc: { order: missing.length } });
+        await galCol.insertMany(docs);
+        report.gallery += docs.length;
+      }
+    }
 
     // ── Product categories ──
     const catCol = db.collection(COLLECTIONS.productCategories);

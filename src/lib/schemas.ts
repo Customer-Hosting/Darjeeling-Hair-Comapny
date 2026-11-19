@@ -122,6 +122,32 @@ export const settingsSchema = z.object({
   announcement: text(160),
 });
 
+const short = (max: number) => z.string().trim().max(max);
+export const aboutSchema = z.object({
+  header: z.object({ eyebrow: short(60), title: z.string().trim().min(1, "required").max(120), intro: short(400) }),
+  founder: z.object({
+    eyebrow: short(60),
+    name: z.string().trim().min(1, "required").max(80),
+    body: short(3000),
+    highlights: z.array(short(120)).max(8),
+    showFollowButton: z.boolean(),
+  }),
+  stats: z.array(z.object({ value: z.string().trim().min(1, "required").max(12), label: short(60) })).max(6),
+  journey: z.object({
+    eyebrow: short(60),
+    title: short(120),
+    items: z.array(z.object({ title: z.string().trim().min(1, "required").max(120), text: short(400) })).max(10),
+  }),
+  values: z.object({
+    eyebrow: short(60),
+    title: short(120),
+    items: z
+      .array(z.object({ icon: z.enum(CATEGORY_ICONS), title: z.string().trim().min(1, "required").max(80), text: short(300) }))
+      .max(9),
+  }),
+  seo: z.object({ title: short(70), description: short(170) }),
+});
+
 export const heroSliderSchema = z.object({
   autoplay: z.boolean(),
   interval: z.number().int().min(2, "minimum 2 seconds").max(30, "maximum 30 seconds"),

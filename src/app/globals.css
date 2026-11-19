@@ -39,26 +39,9 @@
 
   --ease-luxe: cubic-bezier(0.22, 1, 0.36, 1);
 
-  --animate-marquee: marquee 38s linear infinite;
-  --animate-float: float 7s ease-in-out infinite;
-  --animate-spin-slow: spin 28s linear infinite;
-  --animate-glow: glow 4s ease-in-out infinite;
-
-  @keyframes marquee {
-    from { transform: translateX(0); }
-    to { transform: translateX(-50%); }
-  }
   @keyframes grow {
     from { width: 0%; }
     to { width: 100%; }
-  }
-  @keyframes float {
-    0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(-14px); }
-  }
-  @keyframes glow {
-    0%, 100% { filter: drop-shadow(0 0 12px rgb(255 79 163 / 0.35)) drop-shadow(0 0 30px rgb(57 217 138 / 0.15)); }
-    50% { filter: drop-shadow(0 0 20px rgb(255 79 163 / 0.55)) drop-shadow(0 0 44px rgb(57 217 138 / 0.25)); }
   }
 }
 
@@ -85,55 +68,6 @@ body {
 }
 
 * { scrollbar-width: thin; scrollbar-color: #24403a transparent; }
-
-/* ───────── Glow rings & text ───────── */
-@utility neon-rose {
-  color: #ffe3dc;
-  text-shadow: 0 0 6px var(--color-rose), 0 0 22px var(--color-rose), 0 0 44px var(--color-rose-deep);
-}
-@utility neon-emerald {
-  color: #d9ffec;
-  text-shadow: 0 0 6px var(--color-emerald), 0 0 20px var(--color-emerald);
-}
-@utility neon-ring-rose {
-  box-shadow: 0 0 6px rgb(232 165 152 / 0.7), 0 0 26px rgb(232 165 152 / 0.45),
-    inset 0 0 10px rgb(232 165 152 / 0.4);
-}
-@utility neon-ring-emerald {
-  box-shadow: 0 0 6px rgb(57 217 138 / 0.6), 0 0 22px rgb(57 217 138 / 0.35),
-    inset 0 0 8px rgb(57 217 138 / 0.35);
-}
-
-/* ───────── Surfaces ───────── */
-@utility brick-bg {
-  background-color: var(--color-ink);
-  background-image:
-    radial-gradient(ellipse 80% 60% at 50% -10%, rgb(57 217 138 / 0.08), transparent 70%),
-    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='84' height='48'%3E%3Cpath d='M0 .5H84M0 24.5H84M.5 0V24M42.5 24V48' stroke='white' stroke-opacity='.035' fill='none'/%3E%3C/svg%3E");
-}
-@utility glass {
-  background: rgb(11 26 22 / 0.55);
-  border: 1px solid rgb(255 255 255 / 0.09);
-  backdrop-filter: blur(16px) saturate(140%);
-  -webkit-backdrop-filter: blur(16px) saturate(140%);
-}
-@utility text-gradient {
-  background: linear-gradient(100deg, var(--color-rose) 0%, var(--color-champagne) 50%, var(--color-rose-soft) 100%);
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-}
-
-/* Film grain overlay for a premium, tactile feel */
-.grain::after {
-  content: "";
-  pointer-events: none;
-  position: fixed;
-  inset: 0;
-  z-index: 60;
-  opacity: 0.045;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-}
 
 /* Form controls & buttons */
 @utility field {

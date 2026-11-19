@@ -69,11 +69,11 @@ export function Navbar({ phone, whatsapp, socials }: Props) {
         scrolled ? "border-line shadow-[0_8px_30px_-20px_rgba(42,29,23,.35)]" : "border-line/60",
       )}
     >
-      <nav className="mx-auto flex h-[76px] max-w-6xl items-center justify-between gap-6 px-5 md:px-8">
+      <nav className="mx-auto flex h-[84px] max-w-6xl md:h-[92px] items-center justify-between gap-6 px-5 md:px-8">
         {/* Logo + links (grouped on the left, close together) */}
         <div className="flex items-center gap-6 lg:gap-12 xl:gap-[200px]">
           <Link href="/" aria-label="Darjeeling Hair Company — home" className="flex shrink-0 items-center">
-            <LogoBadge className="w-[58px] md:w-[62px]" priority />
+            <LogoBadge className="w-[68px] md:w-[80px]" priority />
           </Link>
           <div className="hidden items-center gap-7 lg:flex xl:gap-10">{NAV_LINKS.map(link)}</div>
         </div>

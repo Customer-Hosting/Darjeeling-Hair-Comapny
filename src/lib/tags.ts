@@ -4,4 +4,5 @@ export const TAGS = {
   gallery: "gallery",
   settings: "settings",
   products: "products",
+  about: "about",
 } as const;

@@ -12,6 +12,8 @@ import {
 } from "./defaults";
 import { toGallery, toHero, toProduct, toProductCategory, toService } from "./serialize";
 import { TAGS } from "./tags";
+import { DEFAULT_ABOUT, normalizeAbout, type AboutContent } from "./about";
+import { imageUrl } from "./images";
 import { normalizeSettings } from "./settings";
 import type { Catalog, GalleryItem, HeroSlide, Service, ServiceCatalog, SiteSettings } from "./types";
 import { makeCategoryLookup, toServiceCategory } from "./service-categories";
@@ -155,5 +157,26 @@ export async function getCatalog(): Promise<Catalog> {
     console.error("[data] catalog", err);
     cacheLife("minutes");
     return DEFAULT_CATALOG;
+  }
+}
+
+/** Editable About page content (falls back to the bundled defaults). */
+export async function getAbout(): Promise<AboutContent> {
+  "use cache";
+  cacheTag(TAGS.about);
+  if (!isDbConfigured()) {
+    cacheLife("minutes");
+    return DEFAULT_ABOUT;
+  }
+  try {
+    const db = await getDb();
+    const doc = await db.collection<{ _id: string } & Record<string, unknown>>(COLLECTIONS.pages).findOne({ _id: "about" });
+    cacheLife("hours");
+    const founder = (doc?.founder ?? {}) as { imageId?: unknown };
+    return normalizeAbout(doc, founder.imageId ? imageUrl(String(founder.imageId)) : null);
+  } catch (err) {
+    console.error("[data] about", err);
+    cacheLife("minutes");
+    return DEFAULT_ABOUT;
   }
 }

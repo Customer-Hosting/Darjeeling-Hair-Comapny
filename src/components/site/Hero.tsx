@@ -73,7 +73,7 @@ export function Hero({ slides, settings }: { slides: HeroSlide[]; settings: Hero
         if (Math.abs(dx) > 50) go(index + (dx < 0 ? 1 : -1));
         startX.current = null;
       }}
-      className="relative isolate flex h-[calc(100svh-7.25rem)] min-h-[440px] items-center pb-10 sm:min-h-[560px] sm:pb-0 justify-center overflow-hidden bg-espresso outline-none"
+      className="relative isolate flex h-[calc(100svh-7.75rem)] md:h-[calc(100svh-8.25rem)] min-h-[440px] items-center pb-10 sm:min-h-[560px] sm:pb-0 justify-center overflow-hidden bg-espresso outline-none"
     >
       {/* ── Slides (all mounted & cross-faded, so the next image is already loaded) ── */}
       {slides.map((s, i) => {
