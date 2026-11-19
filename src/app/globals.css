@@ -1,0 +1,176 @@
+@import "tailwindcss";
+
+/* ───────── Design tokens — "Emerald & Rose Gold" ───────── */
+@theme static {
+  --color-ink: #06110e;        /* emerald black – page background */
+  --color-ink-2: #0b1a16;      /* surface */
+  --color-ink-3: #10241f;      /* raised surface */
+  --color-ink-4: #173029;
+  --color-cream: #f3eee8;      /* warm white text */
+  --color-muted: #9fb2aa;      /* sage-grey secondary text */
+  --color-rose: #e8a598;       /* rose gold – primary */
+  --color-rose-soft: #f4c9bf;
+  --color-rose-deep: #c97f70;
+  --color-emerald: #39d98a;    /* emerald – secondary */
+  --color-champagne: #f0d2a8;  /* champagne – highlights */
+  --color-blush: #ff4fa3;      /* logo pink – small accents */
+
+  /* ── Public website: warm light theme ── */
+  --color-canvas: #fdfaf6;     /* page background */
+  --color-sand: #f4ece4;       /* hero & alternate sections */
+  --color-card: #faf4ee;       /* cards */
+  --color-line: #ecdfd3;       /* borders */
+  --color-espresso: #2a1d17;   /* headings */
+  --color-body: #6e5d54;       /* body copy */
+  --color-accent: #c0775a;     /* terracotta rose-gold */
+  --color-accent-dark: #a35f45;
+  --color-accent-soft: #f5e4da;
+  --color-forest: #1d5443;     /* deep emerald */
+  --color-forest-soft: #e2efe9;
+
+  --font-heading: var(--font-fraunces), Georgia, serif;
+  --font-body: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+
+  --font-sans: var(--font-manrope), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-syne), ui-sans-serif, system-ui, sans-serif;
+  --font-serif: var(--font-instrument), ui-serif, Georgia, serif;
+  --font-script: var(--font-yellowtail), cursive;
+
+  --ease-luxe: cubic-bezier(0.22, 1, 0.36, 1);
+
+  --animate-marquee: marquee 38s linear infinite;
+  --animate-float: float 7s ease-in-out infinite;
+  --animate-spin-slow: spin 28s linear infinite;
+  --animate-glow: glow 4s ease-in-out infinite;
+
+  @keyframes marquee {
+    from { transform: translateX(0); }
+    to { transform: translateX(-50%); }
+  }
+  @keyframes grow {
+    from { width: 0%; }
+    to { width: 100%; }
+  }
+  @keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-14px); }
+  }
+  @keyframes glow {
+    0%, 100% { filter: drop-shadow(0 0 12px rgb(255 79 163 / 0.35)) drop-shadow(0 0 30px rgb(57 217 138 / 0.15)); }
+    50% { filter: drop-shadow(0 0 20px rgb(255 79 163 / 0.55)) drop-shadow(0 0 44px rgb(57 217 138 / 0.25)); }
+  }
+}
+
+:root {
+  color-scheme: dark;
+}
+
+html {
+  scroll-behavior: smooth;
+  -webkit-tap-highlight-color: transparent;
+}
+
+body {
+  background: var(--color-ink);
+  color: var(--color-cream);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+::selection {
+  background: var(--color-rose);
+  color: var(--color-ink);
+}
+
+* { scrollbar-width: thin; scrollbar-color: #24403a transparent; }
+
+/* ───────── Glow rings & text ───────── */
+@utility neon-rose {
+  color: #ffe3dc;
+  text-shadow: 0 0 6px var(--color-rose), 0 0 22px var(--color-rose), 0 0 44px var(--color-rose-deep);
+}
+@utility neon-emerald {
+  color: #d9ffec;
+  text-shadow: 0 0 6px var(--color-emerald), 0 0 20px var(--color-emerald);
+}
+@utility neon-ring-rose {
+  box-shadow: 0 0 6px rgb(232 165 152 / 0.7), 0 0 26px rgb(232 165 152 / 0.45),
+    inset 0 0 10px rgb(232 165 152 / 0.4);
+}
+@utility neon-ring-emerald {
+  box-shadow: 0 0 6px rgb(57 217 138 / 0.6), 0 0 22px rgb(57 217 138 / 0.35),
+    inset 0 0 8px rgb(57 217 138 / 0.35);
+}
+
+/* ───────── Surfaces ───────── */
+@utility brick-bg {
+  background-color: var(--color-ink);
+  background-image:
+    radial-gradient(ellipse 80% 60% at 50% -10%, rgb(57 217 138 / 0.08), transparent 70%),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='84' height='48'%3E%3Cpath d='M0 .5H84M0 24.5H84M.5 0V24M42.5 24V48' stroke='white' stroke-opacity='.035' fill='none'/%3E%3C/svg%3E");
+}
+@utility glass {
+  background: rgb(11 26 22 / 0.55);
+  border: 1px solid rgb(255 255 255 / 0.09);
+  backdrop-filter: blur(16px) saturate(140%);
+  -webkit-backdrop-filter: blur(16px) saturate(140%);
+}
+@utility text-gradient {
+  background: linear-gradient(100deg, var(--color-rose) 0%, var(--color-champagne) 50%, var(--color-rose-soft) 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* Film grain overlay for a premium, tactile feel */
+.grain::after {
+  content: "";
+  pointer-events: none;
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  opacity: 0.045;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* Form controls & buttons */
+@utility field {
+  @apply w-full rounded-xl border border-white/10 bg-white/[0.03] px-4 py-3 text-[15px] text-cream outline-none transition placeholder:text-white/30 focus:border-rose/70 focus:bg-white/[0.05] focus:ring-4 focus:ring-rose/15;
+}
+@utility label {
+  @apply mb-1.5 block text-xs font-semibold tracking-[0.14em] text-white/55 uppercase;
+}
+@utility btn {
+  @apply inline-flex cursor-pointer items-center justify-center gap-2 rounded-full px-6 py-3 text-sm font-semibold tracking-wide transition duration-300 disabled:pointer-events-none disabled:opacity-50;
+}
+@utility btn-primary {
+  @apply btn bg-gradient-to-r from-rose to-champagne text-ink shadow-[0_10px_40px_-12px_rgba(232,165,152,.75)] hover:brightness-105 hover:shadow-[0_14px_50px_-10px_rgba(232,165,152,.95)];
+}
+@utility btn-ghost {
+  @apply btn border border-white/15 text-cream hover:border-rose/60 hover:bg-rose/5;
+}
+@utility chip {
+  @apply inline-flex items-center gap-1.5 rounded-full border border-white/10 bg-white/[0.04] px-3 py-1 text-[11px] font-semibold tracking-[0.16em] text-white/70 uppercase;
+}
+
+/* Public website (light theme) styles live in src/app/(site)/site.css */
+
+select.field {
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23ffffff88' stroke-width='2'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 1rem center;
+  padding-right: 2.5rem;
+}
+select.field option { background: #10241f; }
+input[type="date"].field::-webkit-calendar-picker-indicator { filter: invert(1); opacity: .6; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
