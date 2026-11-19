@@ -3,16 +3,20 @@
 import { useMemo, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { ServiceCard } from "./ServiceCard";
-import { SERVICE_CATEGORIES, type Service } from "@/lib/types";
+import { CategoryIcon } from "@/components/icons/CategoryIcon";
+import type { ServiceCatalog } from "@/lib/types";
 import { cn } from "@/lib/cn";
 
-export function ServicesExplorer({ services }: { services: Service[] }) {
-  const [active, setActive] = useState<string>("All");
+export function ServicesExplorer({ catalog }: { catalog: ServiceCatalog }) {
+  const { services, categories } = catalog;
+  const [active, setActive] = useState<string>("all");
+  // only categories that actually contain visible services, in the admin's order
   const tabs = useMemo(
-    () => ["All", ...SERVICE_CATEGORIES.filter((c) => services.some((s) => s.category === c))],
-    [services],
+    () => categories.filter((c) => services.some((s) => s.categoryId === c.id)),
+    [categories, services],
   );
-  const list = active === "All" ? services : services.filter((s) => s.category === active);
+  const list = active === "all" ? services : services.filter((s) => s.categoryId === active);
+  const activeCat = categories.find((c) => c.id === active);
 
   if (!services.length) {
     return (
@@ -24,25 +28,29 @@ export function ServicesExplorer({ services }: { services: Service[] }) {
 
   return (
     <div>
-      <div role="tablist" aria-label="Service categories" className="mb-10 flex flex-wrap justify-center gap-2">
-        {tabs.map((t) => (
+      <div role="tablist" aria-label="Service categories" className={cn("flex flex-wrap justify-center gap-2", activeCat?.description ? "mb-4" : "mb-10")}>
+        {[{ id: "all", name: "All", icon: null }, ...tabs].map((t) => (
           <button
-            key={t}
+            key={t.id}
             role="tab"
-            aria-selected={active === t}
-            onClick={() => setActive(t)}
+            aria-selected={active === t.id}
+            onClick={() => setActive(t.id)}
             className={cn(
               "relative cursor-pointer rounded-full border px-5 py-2 text-sm font-medium transition",
-              active === t ? "border-accent text-white" : "border-line bg-white text-espresso hover:border-accent/50",
+              active === t.id ? "border-accent text-white" : "border-line bg-white text-espresso hover:border-accent/50",
             )}
           >
-            {active === t && (
+            {active === t.id && (
               <motion.span layoutId="svc-tab" className="absolute inset-0 rounded-full bg-accent" transition={{ type: "spring", stiffness: 400, damping: 34 }} />
             )}
-            <span className="relative">{t}</span>
+            <span className="relative inline-flex items-center gap-1.5">
+              {t.icon && <CategoryIcon icon={t.icon} className="size-3.5" />}
+              {t.name}
+            </span>
           </button>
         ))}
       </div>
+      {activeCat?.description && <p className="mx-auto mb-10 max-w-xl text-center text-sm">{activeCat.description}</p>}
       <motion.div layout className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
         <AnimatePresence mode="popLayout">
           {list.map((s, i) => (

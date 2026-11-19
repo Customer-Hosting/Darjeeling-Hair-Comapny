@@ -1,12 +1,11 @@
 import Link from "next/link";
-import { ArrowRight, Clock, Scissors } from "lucide-react";
+import { ArrowRight, Clock } from "lucide-react";
 import { Img } from "@/components/ui/Img";
-import { SERVICE_ICONS } from "./ServiceRow";
+import { CategoryIcon } from "@/components/icons/CategoryIcon";
 import type { Service } from "@/lib/types";
 
 /** Photo card used on the Services page. */
 export function ServiceCard({ service }: { service: Service; index?: number }) {
-  const Icon = SERVICE_ICONS[service.category] ?? Scissors;
   return (
     <article className="group flex h-full flex-col overflow-hidden rounded-2xl border border-line bg-white transition duration-500 hover:-translate-y-1 hover:shadow-soft">
       <div className="relative aspect-[4/3] overflow-hidden bg-sand">
@@ -19,10 +18,10 @@ export function ServiceCard({ service }: { service: Service; index?: number }) {
             className="object-cover transition duration-[1.2s] ease-luxe group-hover:scale-105"
           />
         ) : (
-          <Icon className="absolute top-1/2 left-1/2 size-16 -translate-x-1/2 -translate-y-1/2 text-accent/30" strokeWidth={1} />
+          <CategoryIcon icon={service.categoryIcon} className="absolute top-1/2 left-1/2 size-16 -translate-x-1/2 -translate-y-1/2 text-accent/30" strokeWidth={1} />
         )}
         <span className="absolute top-4 left-4 inline-flex items-center gap-1.5 rounded-full bg-white/95 px-3 py-1 text-xs font-semibold text-espresso shadow-sm">
-          <Icon className="size-3.5 text-accent" /> {service.category}
+          <CategoryIcon icon={service.categoryIcon} className="size-3.5 text-accent" /> {service.category}
         </span>
       </div>
       <div className="flex flex-1 flex-col p-6">

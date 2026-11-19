@@ -25,7 +25,7 @@ export function BrandLogo({
     <Image
       src={logo}
       alt="The Darjeeling Hair Company — Unisex Salon"
-      priority={priority}
+      preload={priority}
       sizes="(min-width:768px) 300px, 240px"
       className={cn("h-auto select-none", SIZES[size], glow && "animate-glow", className)}
     />

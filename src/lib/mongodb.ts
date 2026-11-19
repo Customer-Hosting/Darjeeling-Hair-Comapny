@@ -42,4 +42,7 @@ export const COLLECTIONS = {
   gallery: "gallery",
   settings: "settings",
   bookings: "bookings",
+  products: "products",
+  productCategories: "product_categories",
+  serviceCategories: "service_categories",
 } as const;

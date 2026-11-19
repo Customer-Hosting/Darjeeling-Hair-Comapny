@@ -1,3 +1,4 @@
+import { ObjectId } from "mongodb";
 import { unauthorized, verifyAdmin } from "@/lib/auth-server";
 import { handleError, jsonError, parseOrError, readForm, refresh, toObjectId } from "@/lib/api";
 import { slugify } from "@/lib/defaults";
@@ -5,6 +6,7 @@ import { deleteImage, saveImage } from "@/lib/images";
 import { COLLECTIONS, getDb } from "@/lib/mongodb";
 import { serviceSchema } from "@/lib/schemas";
 import { toService } from "@/lib/serialize";
+import { makeCategoryLookup, toServiceCategory } from "@/lib/service-categories";
 import { TAGS } from "@/lib/tags";
 
 type Ctx = { params: Promise<{ id: string }> };
@@ -20,6 +22,8 @@ export async function PATCH(req: Request, { params }: Ctx) {
     if (!parsed.ok) return parsed.res;
     const removeImage = fields.removeImage === "true";
     const db = await getDb();
+    const cat = await db.collection(COLLECTIONS.serviceCategories).findOne({ _id: new ObjectId(parsed.data.categoryId) });
+    if (!cat) return jsonError("category: please choose an existing category", 422);
     const col = db.collection(COLLECTIONS.services);
     const existing = await col.findOne({ _id });
     if (!existing) return jsonError("Service not found", 404);
@@ -27,11 +31,11 @@ export async function PATCH(req: Request, { params }: Ctx) {
     const imagePatch = newImageId ? { imageId: newImageId } : removeImage ? { imageId: null } : {};
     await col.updateOne(
       { _id },
-      { $set: { ...parsed.data, slug: slugify(parsed.data.title), ...imagePatch, updatedAt: new Date() } },
+      { $set: { ...parsed.data, category: cat.name, slug: slugify(parsed.data.title), ...imagePatch, updatedAt: new Date() } },
     );
     if (newImageId || removeImage) await deleteImage(existing.imageId);
     refresh(TAGS.services);
-    return Response.json(toService((await col.findOne({ _id }))!));
+    return Response.json(toService((await col.findOne({ _id }))!, makeCategoryLookup([toServiceCategory(cat)])));
   } catch (err) {
     await deleteImage(newImageId);
     return handleError(err);

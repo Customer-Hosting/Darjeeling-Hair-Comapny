@@ -7,10 +7,11 @@ export async function GET(req: Request) {
   if (!(await verifyAdmin(req))) return unauthorized();
   try {
     const db = await getDb();
-    const [hero, services, gallery, pending, total, recent] = await Promise.all([
+    const [hero, services, gallery, products, pending, total, recent] = await Promise.all([
       db.collection(COLLECTIONS.hero).countDocuments(),
       db.collection(COLLECTIONS.services).countDocuments(),
       db.collection(COLLECTIONS.gallery).countDocuments(),
+      db.collection(COLLECTIONS.products).countDocuments(),
       db.collection(COLLECTIONS.bookings).countDocuments({ status: "pending" }),
       db.collection(COLLECTIONS.bookings).countDocuments(),
       db.collection(COLLECTIONS.bookings).find().sort({ createdAt: -1 }).limit(5).toArray(),
@@ -19,6 +20,7 @@ export async function GET(req: Request) {
       hero,
       services,
       gallery,
+      products,
       bookings: { pending, total },
       recent: recent.map(toBooking),
     });

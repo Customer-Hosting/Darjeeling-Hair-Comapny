@@ -1,27 +1,36 @@
 import type { Metadata } from "next";
+import { pageMetadata } from "@/lib/seo";
 import { Clock, Mail, MapPin, Navigation, Phone } from "lucide-react";
 import { PageHeader } from "@/components/site/PageHeader";
 import { BookingForm } from "@/components/site/BookingForm";
 import { SectionHeading } from "@/components/site/SectionHeading";
 import { Faq } from "@/components/site/Faq";
 import { Reveal } from "@/components/ui/Reveal";
-import { FacebookIcon, InstagramIcon, WhatsAppIcon } from "@/components/icons/Brand";
+import { WhatsAppIcon } from "@/components/icons/Brand";
+import { SocialLinks } from "@/components/icons/Social";
+import { telHref } from "@/lib/settings";
 import { getServices, getSettings } from "@/lib/data";
 import { FAQS } from "@/lib/content";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMetadata({
   title: "Contact & Book an Appointment",
-  description:
-    "Book your appointment at Darjeeling Hair Company, Shop No. 5, Jai Complex, Darjeeling 734101. Call or WhatsApp +91 73841 63348.",
-};
+  description: "Book at Darjeeling Hair Company, Shop No. 5, Jai Complex, Darjeeling 734101. Call or WhatsApp +91 73841 63348, or book online in under a minute.",
+  path: "/contact",
+  keywords: ["book salon appointment Darjeeling","salon near me Darjeeling","Darjeeling Hair Company contact"],
+});
 
 export default async function ContactPage() {
   const [s, services] = await Promise.all([getSettings(), getServices()]);
-  const tel = s.phone.replace(/\s/g, "");
-  const cards = [
-    { Icon: Phone, k: "Call us", v: s.phone, href: `tel:${tel}` },
-    { Icon: WhatsAppIcon, k: "WhatsApp", v: "Chat with us instantly", href: `https://wa.me/${s.whatsapp}` },
-    { Icon: Mail, k: "Email", v: s.email, href: `mailto:${s.email}` },
+  const phones = [{ label: "", value: s.phone }, ...s.extraPhones];
+  const emails = [{ label: "", value: s.email }, ...s.extraEmails];
+  const groups = [
+    { Icon: Phone, k: "Call us", items: phones.map((p) => ({ ...p, href: telHref(p.value) })) },
+    {
+      Icon: WhatsAppIcon,
+      k: "WhatsApp",
+      items: [{ label: "", value: "Chat with us instantly", href: `https://wa.me/${s.whatsapp}` }],
+    },
+    { Icon: Mail, k: emails.length > 1 ? "Email us" : "Email", items: emails.map((e) => ({ ...e, href: `mailto:${e.value}` })) },
   ];
 
   return (
@@ -39,24 +48,48 @@ export default async function ContactPage() {
           </Reveal>
 
           <div className="space-y-4">
-            {cards.map(({ Icon, k, v, href }, i) => (
+            {groups.map(({ Icon, k, items }, i) => (
               <Reveal key={k} delay={i * 0.05}>
-                <a
-                  href={href}
-                  target={href.startsWith("http") ? "_blank" : undefined}
-                  rel="noreferrer"
-                  className="s-card group flex items-center gap-4 p-5 transition hover:border-accent/40 hover:bg-white"
-                >
+                <div className="s-card flex gap-4 p-5">
                   <span className="grid size-12 shrink-0 place-items-center rounded-full bg-accent-soft text-accent">
                     <Icon className="size-5" />
                   </span>
-                  <span className="min-w-0">
-                    <span className="block text-sm">{k}</span>
-                    <span className="block truncate font-semibold text-espresso group-hover:text-accent">{v}</span>
-                  </span>
-                </a>
+                  <div className="min-w-0 flex-1">
+                    <p className="text-sm">{k}</p>
+                    <ul className="mt-0.5 space-y-1">
+                      {items.map((it) => (
+                        <li key={it.href}>
+                          <a
+                            href={it.href}
+                            target={it.href.startsWith("http") ? "_blank" : undefined}
+                            rel="noreferrer"
+                            className="block truncate font-semibold text-espresso transition hover:text-accent"
+                          >
+                            {it.value}
+                            {it.label && <span className="ml-1.5 text-sm font-normal text-body">· {it.label}</span>}
+                          </a>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                </div>
               </Reveal>
             ))}
+
+            {s.socials.length > 0 && (
+              <Reveal delay={0.12}>
+                <div className="s-card p-5">
+                  <p className="text-sm">Follow us</p>
+                  <div className="mt-3 flex flex-wrap gap-2">
+                    <SocialLinks
+                      socials={s.socials}
+                      iconClassName="size-[18px]"
+                      itemClassName="grid size-11 place-items-center rounded-full border border-line bg-white text-espresso transition hover:-translate-y-0.5 hover:border-accent hover:text-accent"
+                    />
+                  </div>
+                </div>
+              </Reveal>
+            )}
 
             <Reveal delay={0.15}>
               <div className="s-card p-6">
@@ -89,16 +122,6 @@ export default async function ContactPage() {
                   {s.appleMapsUrl && (
                     <a href={s.appleMapsUrl} target="_blank" rel="noreferrer" className="s-btn-outline !px-4 !py-2 !text-sm">
                       <Navigation className="size-3.5" /> Apple Maps
-                    </a>
-                  )}
-                  {s.instagramUrl && (
-                    <a href={s.instagramUrl} target="_blank" rel="noreferrer" aria-label="Instagram" className="s-btn-outline !px-3 !py-2">
-                      <InstagramIcon className="size-4" />
-                    </a>
-                  )}
-                  {s.facebookUrl && (
-                    <a href={s.facebookUrl} target="_blank" rel="noreferrer" aria-label="Facebook" className="s-btn-outline !px-3 !py-2">
-                      <FacebookIcon className="size-4" />
                     </a>
                   )}
                 </div>

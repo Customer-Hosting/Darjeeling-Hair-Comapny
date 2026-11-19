@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { BOOKING_STATUSES, GALLERY_CATEGORIES, SERVICE_CATEGORIES } from "./types";
+import { BOOKING_STATUSES, CATEGORY_ICONS, GALLERY_CATEGORIES, SOCIAL_PLATFORMS } from "./types";
 
 const bool = z
   .union([z.boolean(), z.string()])
@@ -29,11 +29,37 @@ export const heroSchema = z.object({
 
 export const serviceSchema = z.object({
   title: z.string().trim().min(1, "required").max(100),
-  category: z.enum(SERVICE_CATEGORIES),
+  categoryId: z.string().regex(/^[a-f0-9]{24}$/, "please choose a category"),
   description: text(600),
   price: text(60),
   duration: text(40),
   featured: bool.default(false),
+  active: bool.default(true),
+  order,
+});
+
+export const serviceCategorySchema = z.object({
+  name: z.string().trim().min(1, "required").max(60),
+  description: text(200),
+  icon: z.enum(CATEGORY_ICONS).default("scissors"),
+  order,
+});
+
+export const productCategorySchema = z.object({
+  name: z.string().trim().min(1, "required").max(60),
+  description: text(200),
+  order,
+});
+
+export const productSchema = z.object({
+  name: z.string().trim().min(1, "required").max(100),
+  categoryId: z.string().regex(/^[a-f0-9]{24}$/, "please choose a category"),
+  brand: text(60),
+  size: text(40),
+  price: text(60),
+  description: text(600),
+  featured: bool.default(false),
+  inStock: bool.default(true),
   active: bool.default(true),
   order,
 });
@@ -56,7 +82,20 @@ export const settingsSchema = z.object({
     .string()
     .trim()
     .regex(/^\d{8,15}$/, "digits only incl. country code, e.g. 917384163348"),
-  email: z.email().max(120),
+  email: z.email("must be a valid email").max(120),
+  extraPhones: z
+    .array(
+      z.object({
+        label: text(30),
+        value: z.string().trim().regex(/^\+?[\d\s()-]{6,20}$/, "must be a valid phone number"),
+      }),
+    )
+    .max(5, "up to 5 extra phone numbers")
+    .default([]),
+  extraEmails: z
+    .array(z.object({ label: text(30), value: z.email("must be a valid email").max(120) }))
+    .max(5, "up to 5 extra emails")
+    .default([]),
   addressLine1: z.string().trim().min(1).max(160),
   addressLine2: text(160),
   city: text(80),
@@ -64,12 +103,29 @@ export const settingsSchema = z.object({
   googleMapsUrl: url,
   appleMapsUrl: url,
   mapEmbedUrl: url,
-  instagramUrl: url,
-  facebookUrl: url,
+  socials: z
+    .array(
+      z.object({
+        platform: z.enum(SOCIAL_PLATFORMS),
+        url: z
+          .string()
+          .trim()
+          .max(500)
+          .refine((v) => /^https?:\/\//.test(v), { message: "must start with https://" }),
+      }),
+    )
+    .max(12, "up to 12 social profiles")
+    .default([]),
   hours: z
     .array(z.object({ label: z.string().trim().min(1).max(40), value: z.string().trim().min(1).max(60) }))
     .max(10),
   announcement: text(160),
+});
+
+export const heroSliderSchema = z.object({
+  autoplay: z.boolean(),
+  interval: z.number().int().min(2, "minimum 2 seconds").max(30, "maximum 30 seconds"),
+  pauseOnHover: z.boolean(),
 });
 
 export const bookingSchema = z.object({

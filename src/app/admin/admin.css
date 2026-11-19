@@ -1,0 +1,99 @@
+/*
+ * Super Admin panel — light theme matching the public website.
+ *
+ * The admin components are written with the original dark tokens
+ * (bg-ink, text-white/60, border-white/10, bg-rose …). Tailwind v4 compiles
+ * every colour to a CSS variable, so inside `.admin-theme` we simply remap
+ * those variables to the website's warm light palette. No component needs to
+ * change, and every admin page/modal/toast becomes consistent automatically.
+ *
+ * Plain CSS on purpose (no Tailwind directives) so it compiles reliably.
+ */
+
+html:has(.admin-theme),
+body:has(.admin-theme) {
+  background: #fdfaf6;
+}
+
+.admin-theme {
+  /* surfaces (were dark) */
+  --color-ink: #fdfaf6;      /* page background — also the text colour on accent buttons */
+  --color-ink-2: #ffffff;    /* sidebar, cards, modals */
+  --color-ink-3: #f6efe8;    /* raised / hover surfaces */
+  --color-ink-4: #efe6dd;
+
+  /* text */
+  --color-cream: #2a1d17;    /* primary text */
+  --color-muted: #7a685e;    /* secondary text */
+  /* "white" overlays (text-white/60, border-white/10, bg-white/5 …) become espresso tints */
+  --color-white: #2a1d17;
+
+  /* accents → website terracotta palette, readable on light backgrounds */
+  --color-rose: #c0775a;
+  --color-rose-soft: #a35f45;
+  --color-rose-deep: #a35f45;
+  --color-champagne: #9a6416;
+  --color-emerald: #1d7a57;
+  --color-blush: #d63c86;
+
+  /* typography → website fonts */
+  --font-display: var(--font-fraunces), Georgia, serif;
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+
+  color-scheme: light;
+  color: #2a1d17;
+  background: #fdfaf6;
+  font-family: var(--font-sans);
+}
+
+/* Headings: serif weight similar to the website */
+.admin-theme .font-display {
+  letter-spacing: -0.01em;
+}
+
+/* Primary button: solid terracotta like the website (instead of the old gradient) */
+.admin-theme .btn-primary {
+  background-image: none;
+  background-color: #c0775a;
+  color: #ffffff;
+  border-radius: 0.6rem;
+  box-shadow: 0 8px 24px -12px rgb(192 119 90 / 0.8);
+}
+.admin-theme .btn-primary:hover {
+  background-color: #a35f45;
+  filter: none;
+}
+.admin-theme .btn-ghost {
+  border-radius: 0.6rem;
+  background-color: #ffffff;
+}
+
+/* Cards & panels get a soft warm border/shadow instead of glowing dark edges */
+.admin-theme .rounded-3xl,
+.admin-theme .rounded-2xl {
+  box-shadow: 0 1px 2px rgb(42 29 23 / 0.04);
+}
+
+/* Things that must stay genuinely white/light */
+.admin-theme [role="switch"] > span {
+  background-color: #ffffff;
+}
+.admin-theme .text-on-dark {
+  color: #ffffff;
+}
+
+/* Native form controls */
+.admin-theme select.field {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%237a685e' stroke-width='2'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+}
+.admin-theme select.field option {
+  background: #ffffff;
+  color: #2a1d17;
+}
+.admin-theme input[type="date"].field::-webkit-calendar-picker-indicator {
+  filter: none;
+}
+.admin-theme ::selection {
+  background: #c0775a;
+  color: #ffffff;
+}

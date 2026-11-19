@@ -3,4 +3,5 @@ export const TAGS = {
   services: "services",
   gallery: "gallery",
   settings: "settings",
+  products: "products",
 } as const;

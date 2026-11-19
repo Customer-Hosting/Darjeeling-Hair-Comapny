@@ -31,11 +31,13 @@ export async function saveImage(file: File): Promise<ObjectId> {
   if (file.size > MAX_IMAGE_BYTES) {
     throw new UploadError("Image must be 8 MB or smaller");
   }
+  return saveImageBuffer(Buffer.from(await file.arrayBuffer()), file.name || "upload", file.type);
+}
+
+/** Stores raw image bytes in GridFS (used by uploads and by the sample-content import). */
+export async function saveImageBuffer(buffer: Buffer, filename: string, contentType: string): Promise<ObjectId> {
   const b = await bucket();
-  const buffer = Buffer.from(await file.arrayBuffer());
-  const upload = b.openUploadStream(file.name || "upload", {
-    metadata: { contentType: file.type },
-  });
+  const upload = b.openUploadStream(filename, { metadata: { contentType } });
   await new Promise<void>((resolve, reject) => {
     Readable.from(buffer).pipe(upload).on("finish", resolve).on("error", reject);
   });

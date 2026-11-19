@@ -1,4 +1,6 @@
+import type { Metadata } from "next";
 import Link from "next/link";
+import { pageMetadata } from "@/lib/seo";
 import { ArrowRight, Droplets, Palette, Scissors, ShieldCheck, Sparkles, Users } from "lucide-react";
 import { Hero } from "@/components/site/Hero";
 import { SectionHeading } from "@/components/site/SectionHeading";
@@ -11,9 +13,16 @@ import { Faq } from "@/components/site/Faq";
 import { CtaBanner } from "@/components/site/CtaBanner";
 import { Reveal } from "@/components/ui/Reveal";
 import { Img } from "@/components/ui/Img";
-import { getGallery, getHeroSlides, getServices, getSettings } from "@/lib/data";
-import { ABOUT_IMAGES, PRODUCTS } from "@/lib/defaults";
+import { getCatalog, getGallery, getHeroSlides, getServices, getSettings } from "@/lib/data";
+import { ABOUT_IMAGES } from "@/lib/defaults";
 import { DIFFERENCE, FAQS, PROCESS_STEPS, WHY_US } from "@/lib/content";
+
+export const metadata: Metadata = pageMetadata({
+  title: "Darjeeling Hair Company — Premium Unisex Salon in Darjeeling",
+  description:
+    "Premium unisex salon in Jai Complex, Darjeeling. Toni&Guy-trained, 17 years' experience: haircuts, balayage, hair botox, hair spa & L'Oréal care. Book online.",
+  path: "/",
+});
 
 const WHY_ICONS = { scissors: Scissors, palette: Palette, droplets: Droplets, users: Users, shield: ShieldCheck, sparkles: Sparkles };
 
@@ -28,17 +37,19 @@ function mixCategories<T extends { category: string }>(items: T[]): T[] {
 }
 
 export default async function HomePage() {
-  const [slides, services, gallery, settings] = await Promise.all([
+  const [slides, services, gallery, settings, catalog] = await Promise.all([
     getHeroSlides(),
     getServices(),
     getGallery(),
     getSettings(),
+    getCatalog(),
   ]);
+  const productCategories = catalog.categories.filter((c) => catalog.products.some((p) => p.categoryId === c.id));
   const featured = (services.some((s) => s.featured) ? services.filter((s) => s.featured) : services).slice(0, 6);
 
   return (
     <>
-      <Hero slides={slides} />
+      <Hero slides={slides} settings={settings.heroSlider} />
 
       {/* ── Services ── */}
       <section className="px-5 py-20 md:px-8 md:py-28">
@@ -178,14 +189,21 @@ export default async function HomePage() {
                 Professionnel range is available right here in the salon:
               </p>
               <ul className="mt-6 flex flex-wrap gap-2">
-                {PRODUCTS.map((p) => (
-                  <li key={p.name} className="rounded-full border border-line bg-card px-4 py-1.5 text-sm font-medium text-espresso">{p.name}</li>
+                {productCategories.map((c) => (
+                  <li key={c.id}>
+                    <Link href="/products" className="block rounded-full border border-line bg-card px-4 py-1.5 text-sm font-medium text-espresso transition hover:border-accent hover:text-accent">
+                      {c.name}
+                    </Link>
+                  </li>
                 ))}
               </ul>
               <div className="mt-7">
                 <CheckList items={["Products matched to your hair type", "Simple at-home routines", "Advice, never a sales pitch"]} />
               </div>
-              <Link href="/contact#book" className="s-btn-accent mt-8">Book a consultation</Link>
+              <div className="mt-8 flex flex-wrap gap-3">
+                <Link href="/products" className="s-btn-accent">Shop our products</Link>
+                <Link href="/contact#book" className="s-btn-outline">Book a consultation</Link>
+              </div>
             </Reveal>
           </div>
         </div>

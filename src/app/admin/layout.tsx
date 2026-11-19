@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import "./admin.css";
 import { AdminProvider } from "@/components/admin/AdminProvider";
 
 export const metadata: Metadata = {

@@ -1,4 +1,4 @@
-import type { GalleryItem, HeroSlide, Service, SiteSettings } from "./types";
+import type { CategoryIcon, GalleryItem, HeroSlide, Product, ProductCategory, Service, ServiceCategory, SiteSettings } from "./types";
 
 /** Royalty-free photos (Unsplash licence) bundled in /public/images. */
 export const LOGO_URL = "/images/brand/logo.png";
@@ -67,14 +67,29 @@ const G: [string, GalleryItem["category"], string][] = [
   ["look-18", "Salon", "Retail corner"],
 ];
 
-export const DEFAULT_GALLERY: GalleryItem[] = G.map(([file, category, caption], i) => ({
+/** Product photos for the gallery's "Products" category. */
+const G_PRODUCTS: [string, string][] = [
+  ["product-01", "Professional hair care on our shelves"],
+  ["product-02", "Treatment oils & serums"],
+  ["product-03", "Lightweight finishing serum"],
+  ["product-04", "Nourishing hair oil"],
+  ["product-05", "Salon-grade care to take home"],
+];
+
+const toGallery = ([file, category, caption]: [string, GalleryItem["category"], string], i: number): GalleryItem => ({
   id: `default-${file}`,
   imageUrl: `/images/gallery/${file}.webp`,
   caption,
   category,
   order: i,
   createdAt: "",
-}));
+});
+
+export const DEFAULT_PRODUCT_GALLERY: GalleryItem[] = G_PRODUCTS.map(([file, caption], i) =>
+  toGallery([file, "Products", caption], G.length + i),
+);
+
+export const DEFAULT_GALLERY: GalleryItem[] = [...G.map(toGallery), ...DEFAULT_PRODUCT_GALLERY];
 
 export const BRAND = {
   name: "Darjeeling Hair Company",
@@ -91,6 +106,8 @@ export const DEFAULT_SETTINGS: SiteSettings = {
   phone: "+91 73841 63348",
   whatsapp: "917384163348",
   email: "pranaychettri04@gmail.com",
+  extraPhones: [],
+  extraEmails: [],
   addressLine1: "Shop No. 5, Ground Floor, Jai Complex",
   addressLine2: "",
   city: "Darjeeling, West Bengal",
@@ -99,10 +116,13 @@ export const DEFAULT_SETTINGS: SiteSettings = {
   appleMapsUrl: "https://maps.apple/p/rqYsgLtejfDaWS",
   mapEmbedUrl:
     "https://www.google.com/maps?q=Jai+Complex,+Darjeeling,+West+Bengal+734101&output=embed",
-  instagramUrl: "https://www.instagram.com/pranayzh_chettri",
-  facebookUrl: "https://www.facebook.com/share/1FnMJpJA1v/",
+  socials: [
+    { platform: "instagram", url: "https://www.instagram.com/pranayzh_chettri" },
+    { platform: "facebook", url: "https://www.facebook.com/share/1FnMJpJA1v/" },
+  ],
   hours: [{ label: "Monday – Sunday", value: "10:00 AM – 8:00 PM" }],
   announcement: "",
+  heroSlider: { autoplay: true, interval: 6, pauseOnHover: false },
 };
 
 export const DEFAULT_HERO: HeroSlide[] = [
@@ -145,7 +165,31 @@ export const DEFAULT_HERO: HeroSlide[] = [
   },
 ];
 
-type StarterService = Omit<Service, "id" | "imageUrl" | "customImage" | "slug" | "active" | "order">;
+type StarterServiceCategory = Omit<ServiceCategory, "id" | "order">;
+
+/** The salon's starting service categories — the Super Admin can add, rename, reorder or remove them. */
+export const STARTER_SERVICE_CATEGORIES: StarterServiceCategory[] = [
+  { name: "Cut & Style", slug: "cut-style", icon: "scissors", description: "Precision cuts and finishing styles for men and women." },
+  { name: "Colour", slug: "colour", icon: "palette", description: "Global colour, balayage, ombré and highlights." },
+  { name: "Treatment", slug: "treatment", icon: "droplets", description: "Repair, strengthen and nourish — from hair spa to botox." },
+  { name: "Texture", slug: "texture", icon: "waves", description: "Smoothing, straightening and perming services." },
+];
+
+export const DEFAULT_SERVICE_CATEGORIES: ServiceCategory[] = STARTER_SERVICE_CATEGORIES.map((c, i) => ({
+  ...c,
+  id: `default-svc-${c.slug}`,
+  order: i,
+}));
+
+/** Icon used when a category has none (or for unknown legacy names). */
+export function iconForCategoryName(name: string): CategoryIcon {
+  return STARTER_SERVICE_CATEGORIES.find((c) => c.name === name)?.icon ?? "scissors";
+}
+
+type StarterService = Omit<
+  Service,
+  "id" | "imageUrl" | "customImage" | "slug" | "active" | "order" | "categoryId" | "categoryIcon"
+>;
 
 export const STARTER_SERVICES: StarterService[] = [
   {
@@ -257,6 +301,8 @@ export function slugify(input: string): string {
 
 export const DEFAULT_SERVICES: Service[] = STARTER_SERVICES.map((s, i) => ({
   ...s,
+  categoryId: DEFAULT_SERVICE_CATEGORIES.find((c) => c.name === s.category)?.id ?? "",
+  categoryIcon: iconForCategoryName(s.category),
   id: `default-${i}`,
   slug: slugify(s.title),
   imageUrl: defaultServiceImage(slugify(s.title)),
@@ -265,10 +311,78 @@ export const DEFAULT_SERVICES: Service[] = STARTER_SERVICES.map((s, i) => ({
   order: i,
 }));
 
-export const PRODUCTS = [
-  { name: "Shampoo", note: "Professional cleansing for every hair type" },
-  { name: "Hair Mask", note: "Intensive nourishment & repair" },
-  { name: "Serum", note: "Frizz control and glass-like shine" },
-  { name: "Wax", note: "Flexible hold with natural texture" },
-  { name: "Clay", note: "Matte finish, strong all-day hold" },
-] as const;
+/* ───────────────────────── Retail products ───────────────────────── */
+
+export const DEFAULT_BRAND = "L'Oréal Professionnel";
+
+type StarterCategory = Omit<ProductCategory, "id" | "order">;
+export const STARTER_PRODUCT_CATEGORIES: StarterCategory[] = [
+  { name: "Shampoo", slug: "shampoo", description: "Professional cleansing matched to your hair type and colour." },
+  { name: "Hair Mask", slug: "hair-mask", description: "Intensive weekly nourishment and repair." },
+  { name: "Serum", slug: "serum", description: "Frizz control, protection and glass-like shine." },
+  { name: "Styling", slug: "styling", description: "Wax and clay for hold, texture and a finished look." },
+];
+
+/** Default photo for a product, matched by slug keywords (used until one is uploaded). */
+export const PRODUCT_IMAGES: Record<string, string> = {
+  "repair-shampoo": "/images/products/repair-shampoo.webp",
+  "colour-care-shampoo": "/images/products/colour-care-shampoo.webp",
+  "deep-repair-mask": "/images/products/deep-repair-mask.webp",
+  "hydrating-hair-mask": "/images/products/hydrating-hair-mask.webp",
+  "smoothing-serum": "/images/products/smoothing-serum.webp",
+  "shine-serum": "/images/products/shine-serum.webp",
+  "styling-wax": "/images/products/styling-wax.webp",
+  "matte-styling-clay": "/images/products/matte-styling-clay.webp",
+};
+
+export function defaultProductImage(slug: string): string | null {
+  if (PRODUCT_IMAGES[slug]) return PRODUCT_IMAGES[slug];
+  const rules: [RegExp, string][] = [
+    [/colou?r/, "colour-care-shampoo"],
+    [/shampoo|cleans/, "repair-shampoo"],
+    [/hydrat|moist/, "hydrating-hair-mask"],
+    [/mask|conditioner|treatment/, "deep-repair-mask"],
+    [/shine|oil/, "shine-serum"],
+    [/serum|smooth|frizz/, "smoothing-serum"],
+    [/clay|paste|matte/, "matte-styling-clay"],
+    [/wax|pomade|gel|styl/, "styling-wax"],
+  ];
+  const hit = rules.find(([re]) => re.test(slug));
+  return hit ? PRODUCT_IMAGES[hit[1]] : null;
+}
+
+type StarterProduct = Omit<Product, "id" | "slug" | "categoryId" | "imageUrl" | "customImage" | "active" | "order"> & {
+  categorySlug: string;
+};
+
+/** Sample catalogue — the Super Admin replaces names, sizes & prices with the salon's actual stock. */
+export const STARTER_PRODUCTS: StarterProduct[] = [
+  { name: "Repair Shampoo", categorySlug: "shampoo", brand: DEFAULT_BRAND, size: "", price: "Ask in salon", description: "Gently cleanses and strengthens damaged, over-processed hair.", featured: true, inStock: true },
+  { name: "Colour Care Shampoo", categorySlug: "shampoo", brand: DEFAULT_BRAND, size: "", price: "Ask in salon", description: "Keeps coloured hair vibrant and shiny for longer between visits.", featured: false, inStock: true },
+  { name: "Deep Repair Mask", categorySlug: "hair-mask", brand: DEFAULT_BRAND, size: "", price: "Ask in salon", description: "A rich weekly treatment that restores softness and strength.", featured: true, inStock: true },
+  { name: "Hydrating Hair Mask", categorySlug: "hair-mask", brand: DEFAULT_BRAND, size: "", price: "Ask in salon", description: "Instant moisture for dry, thirsty lengths and ends.", featured: false, inStock: true },
+  { name: "Smoothing Serum", categorySlug: "serum", brand: DEFAULT_BRAND, size: "", price: "Ask in salon", description: "Tames frizz and flyaways for a sleek, polished finish.", featured: true, inStock: true },
+  { name: "Shine Serum", categorySlug: "serum", brand: DEFAULT_BRAND, size: "", price: "Ask in salon", description: "A lightweight finishing touch for glass-like shine.", featured: false, inStock: true },
+  { name: "Styling Wax", categorySlug: "styling", brand: DEFAULT_BRAND, size: "", price: "Ask in salon", description: "Flexible hold with natural texture — easy to restyle.", featured: true, inStock: true },
+  { name: "Matte Styling Clay", categorySlug: "styling", brand: DEFAULT_BRAND, size: "", price: "Ask in salon", description: "Strong, all-day hold with a modern matte finish.", featured: false, inStock: true },
+];
+
+export const DEFAULT_PRODUCT_CATEGORIES: ProductCategory[] = STARTER_PRODUCT_CATEGORIES.map((c, i) => ({
+  ...c,
+  id: `default-cat-${c.slug}`,
+  order: i,
+}));
+
+export const DEFAULT_PRODUCTS: Product[] = STARTER_PRODUCTS.map(({ categorySlug, ...p }, i) => {
+  const slug = slugify(p.name);
+  return {
+    ...p,
+    id: `default-product-${i}`,
+    slug,
+    categoryId: `default-cat-${categorySlug}`,
+    imageUrl: defaultProductImage(slug),
+    customImage: false,
+    active: true,
+    order: i,
+  };
+});

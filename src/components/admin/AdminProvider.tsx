@@ -15,6 +15,10 @@ type Ctx = {
   dbConfigured: boolean;
   deniedReason: string | null;
   signOut: () => Promise<void>;
+  /** Re-render consumers after the Firebase user object changes (e.g. display name update). */
+  refreshUser: () => void;
+  /** Bumps whenever the user profile is refreshed. */
+  userVersion: number;
   /** fetch() with the admin's Firebase ID token attached; throws on error */
   api: <T = unknown>(url: string, init?: RequestInit) => Promise<T>;
   toast: (msg: string, type?: Toast["type"]) => void;
@@ -88,15 +92,18 @@ export function AdminProvider({ children }: { children: React.ReactNode }) {
     return data as T;
   }, []);
 
+  const [userVersion, setUserVersion] = useState(0);
+  const refreshUser = useCallback(() => setUserVersion((v) => v + 1), []);
+
   const value = useMemo(
-    () => ({ status, user, dbConfigured, deniedReason, signOut, api, toast }),
-    [status, user, dbConfigured, deniedReason, signOut, api, toast],
+    () => ({ status, user, dbConfigured, deniedReason, signOut, api, toast, refreshUser, userVersion }),
+    [status, user, dbConfigured, deniedReason, signOut, api, toast, refreshUser, userVersion],
   );
 
   return (
     <AdminCtx.Provider value={value}>
       {children}
-      <div className="pointer-events-none fixed right-4 bottom-4 z-[100] flex w-[min(92vw,380px)] flex-col gap-2">
+      <div className="admin-theme pointer-events-none fixed right-4 bottom-4 !bg-transparent z-[100] flex w-[min(92vw,380px)] flex-col gap-2">
         <AnimatePresence>
           {toasts.map((t) => (
             <motion.div

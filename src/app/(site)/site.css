@@ -14,6 +14,8 @@ body:has(.site) {
 
 @layer components {
   .site {
+    /* safety net: nothing can ever cause sideways scrolling (clip keeps the sticky header working) */
+    overflow-x: clip;
     color-scheme: light;
     background: var(--color-canvas, #fdfaf6);
     color: var(--color-body, #6e5d54);
@@ -30,7 +32,6 @@ body:has(.site) {
     color: var(--color-espresso, #2a1d17);
     font-weight: 700;
     letter-spacing: -0.015em;
-    font-variation-settings: "SOFT" 50, "WONK" 0;
   }
   .eyebrow {
     font-size: 11px;
@@ -149,6 +150,12 @@ body:has(.site) {
     background-position: right 1rem center;
     padding-right: 2.5rem;
   }
+}
+
+/* Hero slider progress bar */
+@keyframes dhc-progress {
+  from { width: 0%; }
+  to { width: 100%; }
 }
 
 @media (prefers-reduced-motion: reduce) {

@@ -31,10 +31,11 @@
   --font-heading: var(--font-fraunces), Georgia, serif;
   --font-body: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
 
-  --font-sans: var(--font-manrope), ui-sans-serif, system-ui, sans-serif;
-  --font-display: var(--font-syne), ui-sans-serif, system-ui, sans-serif;
-  --font-serif: var(--font-instrument), ui-serif, Georgia, serif;
-  --font-script: var(--font-yellowtail), cursive;
+  /* Only two font families are downloaded (Fraunces + Inter); legacy names map onto them. */
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-fraunces), Georgia, serif;
+  --font-serif: var(--font-fraunces), Georgia, serif;
+  --font-script: var(--font-fraunces), Georgia, serif;
 
   --ease-luxe: cubic-bezier(0.22, 1, 0.36, 1);
 

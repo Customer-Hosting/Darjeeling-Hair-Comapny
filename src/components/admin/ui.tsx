@@ -161,7 +161,7 @@ export function ImagePicker({
           <>
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img src={shown} alt="" className="absolute inset-0 size-full object-cover" />
-            <span className="absolute inset-0 grid place-items-center bg-black/55 text-sm font-semibold opacity-0 transition group-hover:opacity-100">
+            <span className="absolute inset-0 grid place-items-center text-on-dark bg-black/55 text-sm font-semibold opacity-0 transition group-hover:opacity-100">
               Click or drop to replace
             </span>
           </>
@@ -245,8 +245,12 @@ export function Empty({ title, text, action }: { title: string; text: string; ac
   );
 }
 
+/**
+ * Loading placeholder. Rendered as a block-level <span> (not a <div>) so it is
+ * valid HTML anywhere — including inside <p>, <a>, <button> or headings.
+ */
 export function Skeleton({ className }: { className?: string }) {
-  return <div className={cn("animate-pulse rounded-2xl bg-white/[0.05]", className)} />;
+  return <span aria-hidden className={cn("block animate-pulse rounded-2xl bg-white/[0.05]", className)} />;
 }
 
 export function IconBtn({ label, onClick, children, danger }: { label: string; onClick: () => void; children: React.ReactNode; danger?: boolean }) {

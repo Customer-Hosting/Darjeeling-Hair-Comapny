@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { pageMetadata } from "@/lib/seo";
 import { Heart, Sparkles, Users } from "lucide-react";
 import { PageHeader } from "@/components/site/PageHeader";
 import { SectionHeading } from "@/components/site/SectionHeading";
@@ -9,15 +10,16 @@ import { CtaBanner } from "@/components/site/CtaBanner";
 import { LogoBadge } from "@/components/site/LogoBadge";
 import { Reveal } from "@/components/ui/Reveal";
 import { Img } from "@/components/ui/Img";
-import { InstagramIcon } from "@/components/icons/Brand";
+import { FollowButton } from "@/components/site/FollowButton";
 import { getSettings } from "@/lib/data";
 import { ABOUT_IMAGES } from "@/lib/defaults";
 
-export const metadata: Metadata = {
-  title: "About Us",
-  description:
-    "Meet Pranay Chettri — Toni&Guy Mumbai-trained founder of Darjeeling Hair Company, with 17 years in the glamour industry.",
-};
+export const metadata: Metadata = pageMetadata({
+  title: "About Us — Pranay Chettri, Toni&Guy-Trained Stylist",
+  description: "Meet Pranay Chettri, Toni&Guy Mumbai-trained founder of Darjeeling Hair Company — 17 years in the glamour industry. A premium unisex salon since 2021.",
+  path: "/about",
+  keywords: ["Pranay Chettri","hair stylist Darjeeling","about Darjeeling Hair Company"],
+});
 
 const JOURNEY = [
   { title: "Trained at Toni&Guy, Mumbai", text: "Hair education at one of the most respected names in hairdressing — where precision and creativity meet." },
@@ -65,9 +67,7 @@ export default async function AboutPage() {
               <div className="mt-7">
                 <CheckList items={["Toni&Guy Mumbai hair education", "17 years of hands-on experience", "Specialist in colour, cuts & treatments"]} />
               </div>
-              <a href={s.instagramUrl} target="_blank" rel="noreferrer" className="s-btn-outline mt-8">
-                <InstagramIcon className="size-4" /> Follow on Instagram
-              </a>
+              <FollowButton s={s} className="mt-8" />
             </Reveal>
           </div>
         </div>

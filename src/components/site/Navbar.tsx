@@ -6,18 +6,20 @@ import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { Menu, Phone, X } from "lucide-react";
 import { LogoBadge } from "./LogoBadge";
-import { FacebookIcon, InstagramIcon, WhatsAppIcon } from "@/components/icons/Brand";
+import { WhatsAppIcon } from "@/components/icons/Brand";
+import { SocialLinks } from "@/components/icons/Social";
+import { telHref } from "@/lib/settings";
+import type { SocialLink } from "@/lib/types";
 import { cn } from "@/lib/cn";
 import { NAV_LINKS } from "./nav-links";
 
 type Props = {
   phone: string;
   whatsapp: string;
-  instagramUrl: string;
-  facebookUrl: string;
+  socials: SocialLink[];
 };
 
-export function Navbar({ phone, whatsapp, instagramUrl, facebookUrl }: Props) {
+export function Navbar({ phone, whatsapp, socials }: Props) {
   const pathname = usePathname();
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
@@ -69,11 +71,11 @@ export function Navbar({ phone, whatsapp, instagramUrl, facebookUrl }: Props) {
     >
       <nav className="mx-auto flex h-[76px] max-w-6xl items-center justify-between gap-6 px-5 md:px-8">
         {/* Logo + links (grouped on the left, close together) */}
-        <div className="flex items-center gap-6 lg:gap-24 xl:gap-[230px]">
+        <div className="flex items-center gap-6 lg:gap-12 xl:gap-[200px]">
           <Link href="/" aria-label="Darjeeling Hair Company — home" className="flex shrink-0 items-center">
             <LogoBadge className="w-[58px] md:w-[62px]" priority />
           </Link>
-          <div className="hidden items-center gap-8 lg:flex xl:gap-12">{NAV_LINKS.map(link)}</div>
+          <div className="hidden items-center gap-7 lg:flex xl:gap-10">{NAV_LINKS.map(link)}</div>
         </div>
 
         {/* CTA (right) */}
@@ -102,13 +104,13 @@ export function Navbar({ phone, whatsapp, instagramUrl, facebookUrl }: Props) {
             transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
             className="overflow-hidden border-t border-line bg-white lg:hidden"
           >
-            <ul className="px-5 py-4">
+            <ul className="px-5 py-2 sm:py-3">
               {NAV_LINKS.map((l, i) => (
                 <motion.li key={l.href} initial={{ opacity: 0, x: -12 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.05 * i }}>
                   <Link
                     href={l.href}
                     className={cn(
-                      "flex items-center justify-between border-b border-line/70 py-3.5 font-heading text-xl font-semibold",
+                      "flex items-center justify-between border-b border-line/70 py-2.5 font-heading text-base font-semibold sm:py-3 sm:text-lg",
                       isActive(l.href) ? "text-accent" : "text-espresso",
                     )}
                   >
@@ -117,19 +119,18 @@ export function Navbar({ phone, whatsapp, instagramUrl, facebookUrl }: Props) {
                 </motion.li>
               ))}
             </ul>
-            <div className="flex items-center gap-2 px-5 pb-6">
-              <a href={`tel:${phone.replace(/\s/g, "")}`} className="s-btn-outline flex-1 !py-3">
-                <Phone className="size-4" /> Call
+            <div className="flex flex-wrap items-center gap-2 px-5 pt-1 pb-5">
+              <a href={telHref(phone)} className="s-btn-outline min-w-24 flex-1 !py-2 !text-sm">
+                <Phone className="size-3.5" /> Call
               </a>
-              <a href={`https://wa.me/${whatsapp}`} target="_blank" rel="noreferrer" aria-label="WhatsApp" className="grid size-12 place-items-center rounded-lg border border-line text-[#1fa855]">
-                <WhatsAppIcon className="size-5" />
+              <a href={`https://wa.me/${whatsapp}`} target="_blank" rel="noreferrer" aria-label="WhatsApp" className="grid size-10 place-items-center rounded-lg border border-line text-[#1fa855]">
+                <WhatsAppIcon className="size-[18px]" />
               </a>
-              <a href={instagramUrl} target="_blank" rel="noreferrer" aria-label="Instagram" className="grid size-12 place-items-center rounded-lg border border-line text-espresso">
-                <InstagramIcon className="size-5" />
-              </a>
-              <a href={facebookUrl} target="_blank" rel="noreferrer" aria-label="Facebook" className="grid size-12 place-items-center rounded-lg border border-line text-espresso">
-                <FacebookIcon className="size-5" />
-              </a>
+              <SocialLinks
+                socials={socials.slice(0, 4)}
+                iconClassName="size-[18px]"
+                itemClassName="grid size-10 place-items-center rounded-lg border border-line text-espresso transition hover:border-accent hover:text-accent"
+              />
             </div>
           </motion.div>
         )}
